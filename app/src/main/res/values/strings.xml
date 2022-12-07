@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MotoAku</string>
+
+    <!-- Fix Data Class -->
+    <string name="fix_part">Part</string>
+    <string name="fix_date_start">Last Service (Date)</string>
+    <string name="fix_date_end">Next Service (Date)</string>
+    <string name="fix_odo_start">Last Service (KM) </string>
+    <string name="fix_odo_end">Next Service (KM)</string>
+    <string name="fix_cost_amount">Amount</string>
+    <string name="fix_cost_currency">Currency</string>
+    <string name="fix_description">Description</string>
+
+</resources>
