@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.motoaku.navigation.BottomNavigation
+import com.example.motoaku.navigation.GraphRoot
 import com.example.motoaku.ui.theme.MotoAkuTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,7 +24,8 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             MotoAkuTheme {
 //                AppBottomNav(navController)
-                BottomNavigation(navController)
+                GraphRoot(navController)
+//                BottomNavigation(navController)
             }
         }
     }

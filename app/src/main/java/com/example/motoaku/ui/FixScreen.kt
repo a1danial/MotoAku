@@ -38,7 +38,7 @@ fun FixScreen(
             .padding(start = 20.dp, end = 20.dp, top = 30.dp)
             .onGloballyPositioned { rowSize = it.size.toSize() }
     ) {
-        MotoCard(selectedMoto) {
+        SelectedMotoCard(selectedMoto) {
             expanded = !expanded
         }
         DropdownMenu(
@@ -63,16 +63,16 @@ fun FixScreen(
             }
         }
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxHeight(7f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 30.dp)
-    ) {
-        items(
-            items = vm.FixList,
-        ) { fix -> FixCard(fix = fix)}
-    }
+//    LazyColumn(
+//        modifier = Modifier.fillMaxHeight(7f),
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.spacedBy(20.dp),
+//        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 30.dp)
+//    ) {
+//        items(
+//            items = vm.FixList,
+//        ) { fix -> FixCard(fix = fix)}
+//    }
 }
 
 @ExperimentalMaterial3Api

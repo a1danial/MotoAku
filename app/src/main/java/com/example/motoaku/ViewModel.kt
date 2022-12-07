@@ -40,8 +40,8 @@ class ViewModel @Inject constructor(
         yearBuilt = null)))
     var FixList by mutableStateOf(emptyList<Fix>())
 
-    // [Moto Screen]
-    fun motoScreenInit() {
+    // [Main Screen]
+    fun mainInit() {
         viewModelScope.launch {
             repoMoto.allMoto.collect {
                 MotoList = it

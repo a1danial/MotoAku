@@ -15,6 +15,7 @@ private val DarkColorPalette = darkColorScheme(
 private val LightColorPalette = lightColorScheme(
     primary = Purple500,
     onPrimary = Purple700,
+    primaryContainer = Purple200,
     secondary = Teal200
 
     /* Other default colors to override

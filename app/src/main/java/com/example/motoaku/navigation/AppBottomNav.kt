@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -23,11 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.motoaku.ViewModel
-import com.example.motoaku.database.motorcycle.Motorcycle
-import com.example.motoaku.ui.AddFixScreen
-import com.example.motoaku.ui.AddMotoScreen
-import com.example.motoaku.ui.FixScreen
-import com.example.motoaku.ui.MotoScreen
+import com.example.motoaku.ui.*
 
 @ExperimentalMaterial3Api
 @Composable
@@ -80,19 +77,23 @@ fun BottomNavigation(
                 ) { Icon(Icons.Filled.Add, null) }
             }
         }
-    ) { innerPadding ->
-        GraphRoot(navController, innerPadding)
+    ) { _ ->
+//        GraphRoot(navController, innerPadding)
     }
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun GraphRoot(navController: NavHostController, innerPadding: PaddingValues) {
+fun GraphRoot(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Moto.name,
-        modifier = Modifier.padding(innerPadding)
+        startDestination = Screen.Home.name,
+        modifier = Modifier.fillMaxSize() // TODO Verify
     ) {
+        composable(route = Screen.Home.name) {
+            HomeScreen(navController)
+        }
+
         composable(route = Screen.Moto.name) {
             MotoScreen()
         }
@@ -115,6 +116,7 @@ enum class Screen(
     val iconSelected2: ImageVector?,
     val iconUnselected2: ImageVector?,
 ) {
+    Home(null,null),
     Moto(Icons.Filled.Motorcycle,Icons.Outlined.Motorcycle),
     Fix(Icons.Filled.Handyman,Icons.Outlined.Handyman),
     AddMoto(null,null),
