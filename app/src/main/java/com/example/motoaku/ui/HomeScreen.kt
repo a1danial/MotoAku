@@ -1,18 +1,14 @@
 package com.example.motoaku.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -30,11 +26,12 @@ import com.example.motoaku.navigation.Screen
 @Composable
 fun HomeScreen(
     navController: NavHostController,
+    selectedScreen: Screen,
+    onChangeSelectedScreen: (Screen) -> Unit,
     vm: ViewModel = hiltViewModel()
 ) {
     // Moto/Fix content variables
     val bottomScreens = listOf(Screen.Moto, Screen.Fix)
-    var selectedIndex by remember { mutableStateOf(Screen.Moto) }
 
     // Dropdown Menu variables
     var expanded by remember { mutableStateOf(false) }
@@ -90,18 +87,18 @@ fun HomeScreen(
                 bottomScreens.forEach { screen ->
                     Button(
                         modifier = Modifier.size(width = 125.dp, height = 35.dp),
-                        onClick = { selectedIndex = screen },
+                        onClick = { onChangeSelectedScreen(screen) },
                         shape = RoundedCornerShape(40.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor =  if (selectedIndex == screen) MaterialTheme.colorScheme.primaryContainer
+                            containerColor =  if (selectedScreen == screen) MaterialTheme.colorScheme.primaryContainer
                             else MaterialTheme.colorScheme.primaryContainer.copy(0.3f),
-                            contentColor = if (selectedIndex == screen) MaterialTheme.colorScheme.onPrimary
+                            contentColor = if (selectedScreen == screen) MaterialTheme.colorScheme.onPrimary
                             else MaterialTheme.colorScheme.onPrimary.copy(0.5f)
                         ),
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Icon(
-                            if (selectedIndex == screen) screen.iconSelected2!! else screen.iconUnselected2!!,
+                            if (selectedScreen == screen) screen.iconSelected2!! else screen.iconUnselected2!!,
                             null)
                         Spacer(modifier = Modifier.size(10.dp))
                         Text(text = screen.name)
@@ -158,5 +155,4 @@ fun SelectedMotoCard(
             }
         }
     }
-
 }

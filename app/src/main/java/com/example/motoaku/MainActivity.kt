@@ -24,8 +24,8 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             MotoAkuTheme {
 //                AppBottomNav(navController)
-                GraphRoot(navController)
-//                BottomNavigation(navController)
+//                GraphRoot(navController)
+                BottomNavigation(navController)
             }
         }
     }

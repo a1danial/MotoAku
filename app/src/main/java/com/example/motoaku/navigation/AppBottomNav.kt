@@ -15,9 +15,9 @@ import androidx.compose.material.icons.outlined.Handyman
 import androidx.compose.material.icons.outlined.Motorcycle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -32,74 +32,49 @@ fun BottomNavigation(
     navController: NavHostController,
     vm: ViewModel = hiltViewModel()
 ) {
-    val screens = listOf(Screen.Moto, Screen.Fix)
-    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    bottomBarState.value = navBackStackEntry?.destination?.route == Screen.Moto.name ||
-            navBackStackEntry?.destination?.route == Screen.Fix.name
-
-    var selectedItem by remember { mutableStateOf(0) }
+    var selectedIndex by remember { mutableStateOf(Screen.Moto) }
 
     LaunchedEffect(vm.MotoList) {
         vm.fixScreenInit()
     }
 
     Scaffold(
-        bottomBar = {
-            Hide(bottomBarState.value) {
-                NavigationBar {
-                    screens.forEachIndexed { index, screen ->
-                        NavigationBarItem(
-                            icon = { Icon(
-                                if (index == selectedItem) screen.iconSelected2!! else screen.iconUnselected2!!,
-                                null,
-                            ) },
-                            label = { Text(screen.name) },
-                            selected = selectedItem == index,
-                            onClick = {
-                                navController.navigate(screen.name)
-                                selectedItem = index
-                            }
-                        )
-                    }
-                }
-            }
-        },
         floatingActionButton = {
-            Hide(bottomBarState.value) {
+            Hide(navBackStackEntry?.destination?.route == Screen.Home.name) {
                 FloatingActionButton(
+                    modifier = Modifier.padding(10.dp),
                     onClick = {
-                        if (navBackStackEntry?.destination?.route.equals(Screen.Moto.name)) {
+                        if (selectedIndex.equals(Screen.Moto)) {
                             navController.navigate(Screen.AddMoto.name) }
-                        else if (navBackStackEntry?.destination?.route.equals(Screen.Fix.name) && vm.MotoList.isNotEmpty()) { // TODO dont allow ifno moto
+                        else if (selectedIndex.equals(Screen.Fix) && vm.MotoList.isNotEmpty()) { // TODO dont allow ifno moto
                             navController.navigate(Screen.AddFix.name) }
                     },
                 ) { Icon(Icons.Filled.Add, null) }
             }
         }
-    ) { _ ->
-//        GraphRoot(navController, innerPadding)
+    ) { innerPadding ->
+        GraphRoot(navController, innerPadding, selectedIndex) { selectedIndex = it }
     }
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun GraphRoot(navController: NavHostController) {
+fun GraphRoot(
+    navController: NavHostController,
+    innerPadding: PaddingValues,
+    selectedIndex: Screen,
+    function: (Screen) -> Unit
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.Home.name,
-        modifier = Modifier.fillMaxSize() // TODO Verify
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
     ) {
         composable(route = Screen.Home.name) {
-            HomeScreen(navController)
-        }
-
-        composable(route = Screen.Moto.name) {
-            MotoScreen()
-        }
-
-        composable(route = Screen.Fix.name) {
-            FixScreen()
+            HomeScreen(navController,selectedIndex, onChangeSelectedScreen = { function(it) })
         }
 
         composable(route = Screen.AddMoto.name) {
