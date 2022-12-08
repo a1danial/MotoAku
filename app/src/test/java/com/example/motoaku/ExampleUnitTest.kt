@@ -19,9 +19,22 @@ class ExampleUnitTest {
 
 class MotorCycleDataClass {
     @Test
-    fun check_brand() {
+    fun When_checkingBrand_expect_returnCorrectBrand() {
         assertEquals(Brand.TRIUMPH,Brand.checkBrand("triumph"))
         assertEquals(Brand.TRIUMPH,Brand.checkBrand(" triumph "))
         assertEquals(Brand.HARLEYDAVIDSON,Brand.checkBrand(" Harley Davidson "))
+    }
+
+
+}
+
+class AddMotoScreen {
+    @Test
+    // Reference to MenuField of BrandField
+    fun When_brandInputHasNoSuggestion_expect_dropDownMenuInvinsible() {
+        val brandSuggestion = Brand.values().map { it.brandName }.filter {
+            it.lowercase().contains("Hdnaxn".lowercase()) }
+        assertTrue(brandSuggestion.isEmpty())
+        // TODO("Test to prove if drop down menu is invisible")
     }
 }

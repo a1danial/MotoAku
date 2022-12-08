@@ -39,23 +39,23 @@ fun AddMotoScreen(
             .padding(top = 30.dp, start = 20.dp, end = 20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        BrandField(brand, modifier) { brand = it.trim() } // Fixme show nothing if empty
+        BrandField(brand, modifier) { brand = it } // Fixme show nothing if empty
 
         TextField(
             value = model,
-            onValueChange = { model = it.trim() },
+            onValueChange = { model = it },
             modifier = modifier,
             label = { Text(text = "Model") }
         )
         TextField(
             value = vin,
-            onValueChange = { vin = it.trim() },
+            onValueChange = { vin = it },
             modifier = modifier,
             label = { Text(text = "VIN") }
         )
         TextField(
             value = yearBuilt,
-            onValueChange = { yearBuilt = it.trim() },
+            onValueChange = { yearBuilt = it },
             modifier = modifier,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text(text = "Year built") }
@@ -64,11 +64,11 @@ fun AddMotoScreen(
             onClick = {
                 vm.addMoto(
                     Motorcycle(
-                        brand = brand,
-                        model = model,
+                        brand = brand.trim(),
+                        model = model.trim(),
                         imageRes = Brand.checkBrand(brand),
-                        vin = vin.ifEmpty { null },
-                        yearBuilt = yearBuilt.ifEmpty { null }?.toInt())
+                        vin = vin.trim().ifEmpty { null },
+                        yearBuilt = yearBuilt.trim().ifEmpty { null }?.toInt())
                 )
                 navController.popBackStack()
         }) {
@@ -82,13 +82,18 @@ fun AddMotoScreen(
 private fun BrandField(brand: String, modifier: Modifier, onValueChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     var rowSize by remember { mutableStateOf(Size.Zero) }
+    var brandSuggestion by remember { mutableStateOf(emptyList<String>()) }
+    val allBrandList = Brand.values().map { it.brandName }.sorted()
 
     Box {
         TextField(
             value = brand,
-            onValueChange = {
-                onValueChange(it)
-                expanded = true },
+            onValueChange = { newBrand ->
+                onValueChange(newBrand)
+                expanded = true
+                brandSuggestion = Brand.values().map { it.brandName }.filter {
+                    it.contains(newBrand,true) }
+                            },
             modifier = modifier
                 .onGloballyPositioned { coordinates ->
                     rowSize = coordinates.size.toSize() },
@@ -100,29 +105,28 @@ private fun BrandField(brand: String, modifier: Modifier, onValueChange: (String
             onDismissRequest = { expanded = false },
             modifier = Modifier.width(with(LocalDensity.current) { rowSize.width.toDp() }),
         ) {
-            if (brand.isNotEmpty()) {
-                Brand.values().map { it.brandName }.filter {
-                    it.lowercase().contains(brand.lowercase())
-                }.sorted().forEach {
-                    DropdownMenuItem(
-                        text = { Text(text = it, modifier = Modifier.fillMaxWidth()) },
-                        onClick = {
-                            onValueChange(it)
-                            expanded = false
-                        })
-                }
-            } else {
-                Brand.values().map { it.brandName }.sorted().forEach {
-                    DropdownMenuItem(
-                        text = { Text(text = it, modifier = Modifier.fillMaxWidth()) },
-                        onClick = {
-                            onValueChange(it)
-                            expanded = false
-                        })
-                }
+            when {
+                brand.isNotEmpty() && brandSuggestion.isEmpty() -> expanded = false
+                brand.isNotEmpty() ->
+                    brandSuggestion.sorted().forEach {
+                        DropdownMenuItem(
+                            text = { Text(text = it, modifier = Modifier.fillMaxWidth()) },
+                            onClick = {
+                                onValueChange(it)
+                                expanded = false
+                            })
+                    }
+                else ->
+                    allBrandList.forEach {
+                        DropdownMenuItem(
+                            text = { Text(text = it, modifier = Modifier.fillMaxWidth()) },
+                            onClick = {
+                                onValueChange(it)
+                                expanded = false
+                            })
+                    }
+
             }
         }
     }
-
-
 }
