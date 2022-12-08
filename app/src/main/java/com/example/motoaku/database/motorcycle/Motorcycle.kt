@@ -37,9 +37,9 @@ enum class Brand (
 //ECLIMO("Eclimo", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 //GPX("GPX", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
     HARLEYDAVIDSON("Harley-Davidson", R.drawable.harley_davidson_logo, listOf("Harley Davidson", "HD", "Harley")),
-//HONDA("Honda", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
+    HONDA("Honda", R.drawable.honda_logo, null),
 //ITALJET("Italjet", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
-//KAWASAKI("Kawasaki", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
+    KAWASAKI("Kawasaki", R.drawable.kawasaki_logo, null),
 //KEEWAY("Keeway", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 //KTM("KTM", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 //KTNS("KTNS", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
@@ -49,7 +49,7 @@ enum class Brand (
 //MOTO MORINI("Moto Morini", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 //NIU("Niu", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 //OTTIMO("Ottimo", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
-//PIAGGIO("Piaggio", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
+    PIAGGIO("Piaggio", R.drawable.piaggio_logo, null),
 //QJ MOTOR("QJ Motor", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 //ROYAL ENFIELD("Royal Enfield", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 //SCOMADI("Scomadi", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
@@ -59,9 +59,9 @@ enum class Brand (
 //SYM("Sym", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 //TREELETRIK("Treeletrik", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
     TRIUMPH("Triumph", R.drawable.triumph_logo, null),
-//    VESPA("Vespa", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
+    VESPA("Vespa", R.drawable.vespa_logo, null),
 //WMOTO("Wmoto", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
-//YAMAHA("Yamaha", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
+    YAMAHA("Yamaha", R.drawable.yamaha_logo, null),
 //ZONTES("Zontes", R.drawable.triumph_logo, null), // TODO Picture, brandname and altname
 
     ;
