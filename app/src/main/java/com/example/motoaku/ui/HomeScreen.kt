@@ -1,14 +1,18 @@
 package com.example.motoaku.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -21,6 +25,9 @@ import androidx.navigation.NavHostController
 import com.example.motoaku.ViewModel
 import com.example.motoaku.database.motorcycle.Motorcycle
 import com.example.motoaku.navigation.Screen
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 @ExperimentalMaterial3Api
 @Composable
@@ -32,16 +39,20 @@ fun HomeScreen(
 ) {
     // Moto/Fix content variables
     val bottomScreens = listOf(Screen.Moto, Screen.Fix)
+    var rowContentSize by remember { mutableStateOf(Size.Zero) }
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     // Dropdown Menu variables
     var expanded by remember { mutableStateOf(false) }
     var selectedMoto by remember { mutableStateOf(Motorcycle(0,"", "", null, null, null)) }
-    var rowSize by remember { mutableStateOf(Size.Zero) }
+    var rowMenuSize by remember { mutableStateOf(Size.Zero) }
 
     LaunchedEffect(vm.MotoList) {
         vm.mainInit()
         selectedMoto = if (vm.MotoList.isNotEmpty()) vm.MotoList[0] else Motorcycle(0,"", "", null, null, null)
     }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -49,7 +60,7 @@ fun HomeScreen(
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 30.dp)
-                .onGloballyPositioned { rowSize = it.size.toSize() }
+                .onGloballyPositioned { rowMenuSize = it.size.toSize() }
         ) {
             SelectedMotoCard(selectedMoto) {
                 expanded = !expanded
@@ -58,10 +69,9 @@ fun HomeScreen(
                 expanded = expanded,
                 properties = PopupProperties(),
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.width(with(LocalDensity.current) { rowSize.width.toDp() }),
+                modifier = Modifier.width(with(LocalDensity.current) { rowMenuSize.width.toDp() }),
             ) {
                 vm.MotoList.forEach { moto ->
-
                     DropdownMenuItem(
                         text = { Text(text = (if (moto.imageRes != null) moto.imageRes.brandName+" - " else "") + moto.model,
                             modifier = Modifier.fillMaxWidth()) },
@@ -84,10 +94,13 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                bottomScreens.forEach { screen ->
+                bottomScreens.forEachIndexed { index, screen ->
                     Button(
                         modifier = Modifier.size(width = 125.dp, height = 35.dp),
-                        onClick = { onChangeSelectedScreen(screen) },
+                        onClick = {
+                            onChangeSelectedScreen(screen)
+                            coroutineScope.launch { listState.animateScrollToItem(index = index) }
+                                  },
                         shape = RoundedCornerShape(40.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor =  if (selectedScreen == screen) MaterialTheme.colorScheme.primaryContainer
@@ -105,16 +118,25 @@ fun HomeScreen(
                     }
                 }
             }
-
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 30.dp)
+            Spacer(modifier = Modifier.size(20.dp))
+            LazyRow(
+                state = listState,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.onPrimary.copy(0.1f), RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .fillMaxSize()
+                    .onGloballyPositioned { rowContentSize = it.size.toSize() },
+                userScrollEnabled = false
             ) {
-               item {
-                   Text(text = "VIN : ${selectedMoto.vin?:""}")
-                   Text(text = "Year Built : ${selectedMoto.yearBuilt?.toString() ?: ""}")
-               }
+                item {
+                    MotoContent(
+                        vin = selectedMoto.vin,
+                        yearBuilt = selectedMoto.yearBuilt,
+                        rowContentSize = rowContentSize
+                    )
+                    FixContent(
+                        rowContentSize = rowContentSize
+                    )
+                }
             }
         }
     }
@@ -153,6 +175,44 @@ fun SelectedMotoCard(
                     style = MaterialTheme.typography.titleMedium
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun MotoContent(
+    vin: String?,
+    yearBuilt: Int?,
+    rowContentSize: Size
+) {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 30.dp),
+        modifier = Modifier.fillMaxHeight()
+            .width(with(LocalDensity.current) { rowContentSize.width.toDp() }),
+    ) {
+        item {
+            Text(text = "VIN : ${vin?:""}")
+            Text(text = "Year Built : ${yearBuilt?.toString() ?: ""}")
+        }
+    }
+}
+
+@Composable
+fun FixContent(
+    rowContentSize: Size,
+
+) {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 30.dp),
+        modifier = Modifier.fillMaxHeight()
+            .width(with(LocalDensity.current) { rowContentSize.width.toDp() }),
+    ) {
+        item {
+            Text(text = "Fix")
         }
     }
 }
