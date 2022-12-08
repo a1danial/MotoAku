@@ -235,7 +235,9 @@ fun FixContent(
                     Row {
                         Text(text = SimpleDateFormat("EEE d MMM yyyy").format(fix.dateStart),
                             Modifier.weight(1f))
-                        Text(text = SimpleDateFormat("EEE d MMM yyyy").format(fix.dateEnd),
+                        Text(text =
+                        if (fix.dateEnd != null) SimpleDateFormat("EEE d MMM yyyy").format(fix.dateEnd)
+                        else "",
                             Modifier.weight(1f))
                     }
                     Row {
