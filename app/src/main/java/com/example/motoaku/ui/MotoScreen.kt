@@ -17,7 +17,6 @@ fun MotoScreen(
     vm: ViewModel = hiltViewModel()
 ) {
     LaunchedEffect(vm.MotoList) {
-        vm.fixScreenInit()
     }
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,

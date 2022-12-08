@@ -1,5 +1,6 @@
 package com.example.motoaku.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
@@ -20,9 +21,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.example.motoaku.ViewModel
 import com.example.motoaku.ui.*
 
@@ -34,10 +37,6 @@ fun BottomNavigation(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var selectedIndex by remember { mutableStateOf(Screen.Moto) }
-
-    LaunchedEffect(vm.MotoList) {
-        vm.fixScreenInit()
-    }
 
     Scaffold(
         floatingActionButton = {
@@ -52,15 +51,23 @@ fun BottomNavigation(
                     modifier = Modifier.padding(10.dp),
                     onClick = {
                         if (selectedIndex.equals(Screen.Moto)) {
-                            navController.navigate(Screen.AddMoto.name) }
+                            navController.navigate(Screen.AddMoto.name)
+                        }
                         else if (selectedIndex.equals(Screen.Fix) && vm.MotoList.isNotEmpty()) {
-                            navController.navigate(Screen.AddFix.name) }
+                            navController.navigate(Screen.AddFix.name+"/?motoId=${vm.motoTracker.mId}")
+                            Log.i("FAB","motoTracker: $vm.motoTracker")
+                        }
                     },
                 ) { Icon(selectedIndex.iconSelected2?:Icons.Filled.Add, null) }
             }
         }
     ) { innerPadding ->
-        GraphRoot(navController, innerPadding, selectedIndex) { selectedIndex = it }
+        GraphRoot(
+            navController = navController,
+            innerPadding = innerPadding,
+            selectedIndex = selectedIndex,
+            vm = vm
+        ) { selectedIndex = it }
     }
 }
 
@@ -70,6 +77,7 @@ fun GraphRoot(
     navController: NavHostController,
     innerPadding: PaddingValues,
     selectedIndex: Screen,
+    vm: ViewModel,
     function: (Screen) -> Unit
 ) {
     NavHost(
@@ -80,15 +88,27 @@ fun GraphRoot(
             .padding(innerPadding)
     ) {
         composable(route = Screen.Home.name) {
-            HomeScreen(navController,selectedIndex, onChangeSelectedScreen = { function(it) })
+            HomeScreen(
+                navController = navController,
+                selectedScreen = selectedIndex,
+                onChangeSelectedScreen = { function(it) },
+                vm = vm
+            )
         }
 
         composable(route = Screen.AddMoto.name) {
             AddMotoScreen(navController)
         }
 
-        composable(route = Screen.AddFix.name) {
-            AddFixScreen(navController)
+        composable(
+            route = Screen.AddFix.name+"/?motoId={motoId}",
+            arguments = listOf(navArgument("motoId") {
+                defaultValue = 0
+                type = NavType.IntType
+            } )
+        ) { navBackStackEntry ->
+            val motoId = navBackStackEntry.arguments?.getInt("motoId")
+            motoId?.let { AddFixScreen(navController,it) }
         }
     }
 }

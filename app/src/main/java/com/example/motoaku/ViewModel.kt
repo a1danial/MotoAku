@@ -13,7 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +21,8 @@ class ViewModel @Inject constructor(
     private val repoFix: FixRepository,
     private val repoMoto: MotorcycleRepository
 ): ViewModel() {
+
+    var motoTracker by mutableStateOf(Motorcycle.emptyMoto)
 
     private val _uiMotoState = MutableStateFlow(
         Motorcycle(
@@ -46,9 +47,11 @@ class ViewModel @Inject constructor(
         viewModelScope.launch {
             repoMoto.allMoto.collect {
                 MotoList = it
-                if (it.isNotEmpty()) repoFix.fixFromMotoId(it[0].mId).collect {
-                    FixList = it
-                }
+                if (it.isNotEmpty())
+                    motoTracker =  it[0]
+                    repoFix.fixFromMotoId(it[0].mId).collect {
+                        FixList = it
+                    }
             }
         }
     }
@@ -63,17 +66,13 @@ class ViewModel @Inject constructor(
         repoMoto.insert(motorcycle)
     }
 
-    // [Fix Screen]
-    fun fixScreenInit() {
-        viewModelScope.launch {
-            repoMoto.allMoto.collect { MotoList = it }
-        }
-    }
-
     // [Add Fix Screen]
-    fun addFixScreenInit() {
+    fun addFixScreenInit(motoId: Int) {
         viewModelScope.launch {
-            repoMoto.allMoto.collect { MotoList = it }
+            repoMoto.allMoto.collect { list ->
+                MotoList = list
+                motoTracker = list.find { it.mId == motoId }?:Motorcycle.emptyMoto
+            }
         }
     }
     fun addFix(fix: Fix) = viewModelScope.launch {

@@ -35,7 +35,7 @@ fun HomeScreen(
     navController: NavHostController,
     selectedScreen: Screen,
     onChangeSelectedScreen: (Screen) -> Unit,
-    vm: ViewModel = hiltViewModel()
+    vm: ViewModel
 ) {
     // Moto/Fix content variables
     val bottomScreens = listOf(Screen.Moto, Screen.Fix)
@@ -45,13 +45,12 @@ fun HomeScreen(
 
     // Dropdown Menu variables
     var expanded by remember { mutableStateOf(false) }
-    var selectedMoto by remember { mutableStateOf(Motorcycle(0,"", "", null, null, null)) }
     var rowMenuSize by remember { mutableStateOf(Size.Zero) }
 
     LaunchedEffect(vm.MotoList) {
         vm.mainInit()
-        selectedMoto = if (vm.MotoList.isNotEmpty()) vm.MotoList[0] else Motorcycle(0,"", "", null, null, null)
     }
+    LaunchedEffect(vm.motoTracker) {  }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -62,7 +61,7 @@ fun HomeScreen(
                 .padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 30.dp)
                 .onGloballyPositioned { rowMenuSize = it.size.toSize() }
         ) {
-            SelectedMotoCard(selectedMoto) {
+            SelectedMotoCard(vm.motoTracker) {
                 expanded = !expanded
             }
             DropdownMenu(
@@ -81,7 +80,7 @@ fun HomeScreen(
                                     null,
                                     Modifier.size(24.dp)) } },
                         onClick = {
-                            selectedMoto = moto
+                            vm.motoTracker = moto
                             vm.mainShowMotoIdFixList(moto.mId)
                             expanded = false
                         })
@@ -131,8 +130,8 @@ fun HomeScreen(
             ) {
                 item {
                     MotoContent(
-                        vin = selectedMoto.vin,
-                        yearBuilt = selectedMoto.yearBuilt,
+                        vin = vm.motoTracker.vin,
+                        yearBuilt = vm.motoTracker.yearBuilt,
                         rowContentSize = rowContentSize
                     )
                     FixContent(

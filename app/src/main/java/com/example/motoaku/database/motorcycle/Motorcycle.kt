@@ -14,7 +14,11 @@ data class Motorcycle (
     @ColumnInfo(name = "imageRes") val imageRes: Brand?,
     @ColumnInfo(name = "VIN") val vin: String?,
     @ColumnInfo(name = "year_built") val yearBuilt: Int?,
-)
+) {
+    companion object {
+        val emptyMoto = Motorcycle(brand = "", model = "", imageRes = null, vin = null, yearBuilt = null)
+    }
+}
 
 enum class Brand (
     val brandName: String,

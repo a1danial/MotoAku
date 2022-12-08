@@ -29,7 +29,7 @@ fun FixScreen(
     var selectedMoto by remember { mutableStateOf(Motorcycle(0,"", "", null, null, null)) }
     var rowSize by remember { mutableStateOf(Size.Zero) }
     LaunchedEffect(vm.MotoList) {
-        vm.fixScreenInit()
+//        vm.fixScreenInit()
         selectedMoto = if (vm.MotoList.isNotEmpty()) vm.MotoList[0] else Motorcycle(0,"", "", null, null, null)
     }
 

@@ -1,6 +1,7 @@
 package com.example.motoaku.ui
 
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -40,9 +41,9 @@ import java.util.*
 @Composable
 fun AddFixScreen(
     navController: NavHostController,
+    motoId: Int,
     vm: ViewModel = hiltViewModel()
 ) {
-    var selectedMoto by remember { mutableStateOf(Motorcycle(0,"", "", null, null, null)) }
     var part by remember { mutableStateOf("") }
     var partCheck by remember { mutableStateOf(false) } // TODO error
     var dateStart by remember { mutableStateOf(Date(0)) }
@@ -56,9 +57,8 @@ fun AddFixScreen(
     val mCalendar = Calendar.getInstance()
     val modifier = Modifier.fillMaxWidth()
 
-    LaunchedEffect(vm.MotoList[0]) {
-        vm.addFixScreenInit()
-        selectedMoto = vm.MotoList[0]
+    LaunchedEffect(Unit) {
+        vm.addFixScreenInit(motoId)
         dateStart = Date.from(LocalDateTime.of(mCalendar.get(Calendar.YEAR),mCalendar.get(Calendar.MONTH),mCalendar.get(Calendar.DAY_OF_MONTH),0,0,0).toInstant(ZoneOffset.of("Z")))
     }
 
@@ -68,8 +68,8 @@ fun AddFixScreen(
             .padding(top = 30.dp, start = 20.dp, end = 20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        BrandField(selectedMoto, vm.MotoList, modifier) {
-            selectedMoto = it
+        BrandField(vm.motoTracker, vm.MotoList, modifier) {
+            vm.motoTracker = it
         }
         GenericTextField(R.string.fix_part,part,modifier,isError = partCheck) {
             part = it
@@ -104,7 +104,7 @@ fun AddFixScreen(
                 } else {
                     vm.addFix(
                         Fix(
-                            motoId = selectedMoto.mId,
+                            motoId = vm.motoTracker.mId,
                             dateStart = dateStart,
                             part = part.trim(),
                             dateEnd = if (!dateEndFirst) dateEnd else null,
