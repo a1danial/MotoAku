@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -12,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -23,11 +23,11 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.motoaku.ViewModel
+import com.example.motoaku.database.fix.Fix
 import com.example.motoaku.database.motorcycle.Motorcycle
 import com.example.motoaku.navigation.Screen
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
+import java.text.SimpleDateFormat
 
 @ExperimentalMaterial3Api
 @Composable
@@ -82,6 +82,7 @@ fun HomeScreen(
                                     Modifier.size(24.dp)) } },
                         onClick = {
                             selectedMoto = moto
+                            vm.mainShowMotoIdFixList(moto.mId)
                             expanded = false
                         })
                 }
@@ -122,7 +123,8 @@ fun HomeScreen(
             LazyRow(
                 state = listState,
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.onPrimary.copy(0.1f), RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .background(MaterialTheme.colorScheme.onPrimary.copy(0.05f),
+                        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                     .fillMaxSize()
                     .onGloballyPositioned { rowContentSize = it.size.toSize() },
                 userScrollEnabled = false
@@ -134,7 +136,8 @@ fun HomeScreen(
                         rowContentSize = rowContentSize
                     )
                     FixContent(
-                        rowContentSize = rowContentSize
+                        rowContentSize = rowContentSize,
+                        fixList = vm.FixList
                     )
                 }
             }
@@ -189,7 +192,8 @@ fun MotoContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 30.dp),
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier
+            .fillMaxHeight()
             .width(with(LocalDensity.current) { rowContentSize.width.toDp() }),
     ) {
         item {
@@ -199,20 +203,49 @@ fun MotoContent(
     }
 }
 
+@ExperimentalMaterial3Api
 @Composable
 fun FixContent(
     rowContentSize: Size,
-
+    fixList: List<Fix>
 ) {
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 30.dp),
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier
+            .fillMaxHeight()
             .width(with(LocalDensity.current) { rowContentSize.width.toDp() }),
     ) {
-        item {
-            Text(text = "Fix")
+        items(items = fixList) { fix ->
+            Card(
+                onClick = { /*TODO*/ }
+            ) {
+                Column(
+                    modifier = Modifier.padding(15.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(text = fix.part, style = MaterialTheme.typography.labelMedium)
+                    Row {
+                        Text(text = "Last Service",
+                            Modifier.weight(1f))
+                        Text(text = "Next Service",
+                            Modifier.weight(1f))
+                    }
+                    Row {
+                        Text(text = SimpleDateFormat("EEE d MMM yyyy").format(fix.dateStart),
+                            Modifier.weight(1f))
+                        Text(text = SimpleDateFormat("EEE d MMM yyyy").format(fix.dateEnd),
+                            Modifier.weight(1f))
+                    }
+                    Row {
+                        Text(text = if (fix.odoStart != null) "${fix.odoStart} KM" else "",
+                            Modifier.weight(1f))
+                        Text(text = if (fix.odoStart != null) "${fix.odoEnd} KM" else "",
+                            Modifier.weight(1f))
+                    }
+                }
+            }
         }
     }
 }

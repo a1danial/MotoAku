@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FixDao {
-    @Query("SELECT * FROM fix")
-    fun getAll(): Flow<List<Fix>>
+    @Query("SELECT * FROM fix WHERE moto_id = :motoId")
+    fun getFixFromMotoId(motoId: Int): Flow<List<Fix>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(fix: Fix)

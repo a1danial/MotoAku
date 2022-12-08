@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,7 +46,15 @@ class ViewModel @Inject constructor(
         viewModelScope.launch {
             repoMoto.allMoto.collect {
                 MotoList = it
+                if (it.isNotEmpty()) repoFix.fixFromMotoId(it[0].mId).collect {
+                    FixList = it
+                }
             }
+        }
+    }
+    fun mainShowMotoIdFixList(motoId: Int) {
+        viewModelScope.launch {
+            repoFix.fixFromMotoId(motoId).collect { FixList = it }
         }
     }
 

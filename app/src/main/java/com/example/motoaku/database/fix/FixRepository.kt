@@ -1,11 +1,11 @@
 package com.example.motoaku.database.fix
 
 import androidx.annotation.WorkerThread
-import java.util.concurrent.Flow
+import kotlinx.coroutines.flow.Flow
 
 class FixRepository(private val fixDao: FixDao) {
 
-    val allFix: kotlinx.coroutines.flow.Flow<List<Fix>> = fixDao.getAll()
+    fun fixFromMotoId(motoId: Int): Flow<List<Fix>> = fixDao.getFixFromMotoId(motoId)
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
