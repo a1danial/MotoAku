@@ -61,12 +61,6 @@ fun AddFixScreen(
         selectedMoto = vm.MotoList[0]
         dateStart = Date.from(LocalDateTime.of(mCalendar.get(Calendar.YEAR),mCalendar.get(Calendar.MONTH),mCalendar.get(Calendar.DAY_OF_MONTH),0,0,0).toInstant(ZoneOffset.of("Z")))
     }
-//    LaunchedEffect(partCheck) {
-//        Handler().postDelayed({
-//
-//        }, 2000)
-//    }
-
 
     Column(
         modifier = Modifier
@@ -86,13 +80,15 @@ fun AddFixScreen(
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             DateField(R.string.fix_date_start,
                 SimpleDateFormat("EEE d MMM yyyy").format(dateStart),
-                mCalendar,modifier.weight(1f)) { year, month, day ->
-                dateStart = Date.from(LocalDateTime.of(year,month,day,0,0,0).toInstant(ZoneOffset.of("Z")))
+                mCalendar,modifier.weight(1f)
+            ) { year, month, day ->
+                dateStart = Date.from(LocalDateTime.of(year,month+1,day,0,0,0).toInstant(ZoneOffset.of("Z")))
             }
             DateField(R.string.fix_date_end,
                 if (dateEndFirst) "" else SimpleDateFormat("EEE d MMM yyyy").format(dateEnd),
-                mCalendar,modifier.weight(1f),{ dateEndFirst = false }) { year, month, day ->
-                dateEnd = Date.from(LocalDateTime.of(year,month,day,0,0,0).toInstant(ZoneOffset.of("Z")))
+                mCalendar,modifier.weight(1f),{ dateEndFirst = false }
+            ) { year, month, day ->
+                dateEnd = Date.from(LocalDateTime.of(year,month+1,day,0,0,0).toInstant(ZoneOffset.of("Z")))
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
