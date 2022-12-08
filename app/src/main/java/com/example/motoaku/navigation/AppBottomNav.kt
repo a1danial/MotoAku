@@ -41,16 +41,22 @@ fun BottomNavigation(
 
     Scaffold(
         floatingActionButton = {
-            Hide(navBackStackEntry?.destination?.route == Screen.Home.name) {
+            Visibility( when {
+                navBackStackEntry?.destination?.route == Screen.Home.name &&
+                        selectedIndex.equals(Screen.Fix) &&
+                        vm.MotoList.isEmpty() -> false
+                navBackStackEntry?.destination?.route == Screen.Home.name -> true
+                else -> false }
+            ) {
                 FloatingActionButton(
                     modifier = Modifier.padding(10.dp),
                     onClick = {
                         if (selectedIndex.equals(Screen.Moto)) {
                             navController.navigate(Screen.AddMoto.name) }
-                        else if (selectedIndex.equals(Screen.Fix) && vm.MotoList.isNotEmpty()) { // TODO dont allow ifno moto
+                        else if (selectedIndex.equals(Screen.Fix) && vm.MotoList.isNotEmpty()) {
                             navController.navigate(Screen.AddFix.name) }
                     },
-                ) { Icon(Icons.Filled.Add, null) }
+                ) { Icon(selectedIndex.iconSelected2?:Icons.Filled.Add, null) }
             }
         }
     ) { innerPadding ->
@@ -99,7 +105,7 @@ enum class Screen(
 }
 
 @Composable
-fun Hide(value: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
+fun Visibility(value: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
     AnimatedVisibility(
         visible = value,
         enter = EnterTransition.None,
