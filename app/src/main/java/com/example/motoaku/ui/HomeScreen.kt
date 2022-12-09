@@ -20,12 +20,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.motoaku.ViewModel
 import com.example.motoaku.database.fix.Fix
 import com.example.motoaku.database.motorcycle.Motorcycle
-import com.example.motoaku.navigation.Screen
+import com.example.motoaku.navigation.Content
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
@@ -33,25 +32,22 @@ import java.text.SimpleDateFormat
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    selectedScreen: Screen,
-    onChangeSelectedScreen: (Screen) -> Unit,
     vm: ViewModel
 ) {
     // Moto/Fix content variables
-    val bottomScreens = listOf(Screen.Moto, Screen.Fix)
+    val bottomContents = listOf(Content.Moto, Content.Fix)
     var rowContentSize by remember { mutableStateOf(Size.Zero) }
-    // FIXME Fix content not correctly after adding fix, although button is correctly selected
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(Unit) { if (vm.contentTracker == bottomContents[1]) listState.animateScrollToItem(index = 1) }
 
     // Dropdown Menu variables
     var expanded by remember { mutableStateOf(false) }
     var rowMenuSize by remember { mutableStateOf(Size.Zero) }
 
     LaunchedEffect(vm.MotoList) {
-        vm.mainInit()
+        vm.returnFromAddMoto()
     }
-    LaunchedEffect(vm.motoTracker) {  }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -95,27 +91,27 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                bottomScreens.forEachIndexed { index, screen ->
+                bottomContents.forEachIndexed { index, content ->
                     Button(
                         modifier = Modifier.size(width = 125.dp, height = 35.dp),
                         onClick = {
-                            onChangeSelectedScreen(screen)
+                            vm.mainOnChangeSelectedScreen(content)
                             coroutineScope.launch { listState.animateScrollToItem(index = index) }
                                   },
                         shape = RoundedCornerShape(40.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor =  if (selectedScreen == screen) MaterialTheme.colorScheme.primaryContainer
+                            containerColor =  if (vm.contentTracker == content) MaterialTheme.colorScheme.primaryContainer
                             else MaterialTheme.colorScheme.primaryContainer.copy(0.3f),
-                            contentColor = if (selectedScreen == screen) MaterialTheme.colorScheme.onPrimary
+                            contentColor = if (vm.contentTracker == content) MaterialTheme.colorScheme.onPrimary
                             else MaterialTheme.colorScheme.onPrimary.copy(0.5f)
                         ),
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Icon(
-                            if (selectedScreen == screen) screen.iconSelected2!! else screen.iconUnselected2!!,
+                            if (vm.contentTracker == content) content.iconSelected!! else content.iconUnselected!!,
                             null)
                         Spacer(modifier = Modifier.size(10.dp))
-                        Text(text = screen.name)
+                        Text(text = content.name)
                     }
                 }
             }

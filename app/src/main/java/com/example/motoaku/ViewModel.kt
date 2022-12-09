@@ -9,10 +9,8 @@ import com.example.motoaku.database.fix.Fix
 import com.example.motoaku.database.fix.FixRepository
 import com.example.motoaku.database.motorcycle.Motorcycle
 import com.example.motoaku.database.motorcycle.MotorcycleRepository
+import com.example.motoaku.navigation.Content
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,34 +19,18 @@ class ViewModel @Inject constructor(
     private val repoFix: FixRepository,
     private val repoMoto: MotorcycleRepository
 ): ViewModel() {
-
-    var motoTracker by mutableStateOf(Motorcycle.emptyMoto)
-
-    private val _uiMotoState = MutableStateFlow(
-        Motorcycle(
-            brand = "",
-            model = "",
-            imageRes = null,
-            vin = null,
-            yearBuilt = null
-        ) )
-    val uiMotoState: StateFlow<Motorcycle> = _uiMotoState.asStateFlow()
-
-    var MotoList by mutableStateOf(listOf(Motorcycle(
-        brand = "",
-        model = "",
-        imageRes = null,
-        vin = null,
-        yearBuilt = null)))
-    var FixList by mutableStateOf(emptyList<Fix>())
+    var MotoList by mutableStateOf(listOf(Motorcycle.emptyMoto))
 
     // [Main Screen]
-    fun mainInit() {
+    var motoTracker by mutableStateOf(Motorcycle.emptyMoto)
+    var contentTracker by mutableStateOf(Content.Moto)
+    var FixList by mutableStateOf(emptyList<Fix>())
+    fun mainInit(returnFromAddFix: Boolean) {
         viewModelScope.launch {
             repoMoto.allMoto.collect {
                 MotoList = it
                 if (it.isNotEmpty()) {
-                    motoTracker =  it[0]
+                    if (!returnFromAddFix) motoTracker =  it[0]
                     repoFix.fixFromMotoId(it[0].mId).collect {
                         FixList = it
                     }
@@ -56,10 +38,18 @@ class ViewModel @Inject constructor(
             }
         }
     }
+    fun returnFromAddMoto() {
+        viewModelScope.launch {
+            repoMoto.allMoto.collect { MotoList = it }
+        }
+    }
     fun mainShowMotoIdFixList(motoId: Int) {
         viewModelScope.launch {
             repoFix.fixFromMotoId(motoId).collect { FixList = it }
         }
+    }
+    fun mainOnChangeSelectedScreen(content: Content) {
+        contentTracker = content
     }
 
     // [Add Moto Screen]

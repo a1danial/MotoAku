@@ -1,6 +1,5 @@
 package com.example.motoaku.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
@@ -27,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.motoaku.ViewModel
+import com.example.motoaku.database.motorcycle.Motorcycle
 import com.example.motoaku.ui.*
 
 @ExperimentalMaterial3Api
@@ -36,13 +36,16 @@ fun BottomNavigation(
     vm: ViewModel = hiltViewModel()
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    var selectedIndex by remember { mutableStateOf(Screen.Moto) }
+    var motoTracker by remember { mutableStateOf(Motorcycle.emptyMoto) }
+    LaunchedEffect(Unit) {
+        vm.mainInit(returnFromAddFix = motoTracker != Motorcycle.emptyMoto)
+    }
 
     Scaffold(
         floatingActionButton = {
             Visibility( when {
                 navBackStackEntry?.destination?.route == Screen.Home.name &&
-                        selectedIndex.equals(Screen.Fix) &&
+                        vm.contentTracker == Content.Fix &&
                         vm.MotoList.isEmpty() -> false
                 navBackStackEntry?.destination?.route == Screen.Home.name -> true
                 else -> false }
@@ -50,24 +53,23 @@ fun BottomNavigation(
                 FloatingActionButton(
                     modifier = Modifier.padding(10.dp),
                     onClick = {
-                        if (selectedIndex.equals(Screen.Moto)) {
+                        if (vm.contentTracker.equals(Content.Moto)) {
                             navController.navigate(Screen.AddMoto.name)
                         }
-                        else if (selectedIndex.equals(Screen.Fix) && vm.MotoList.isNotEmpty()) {
+                        else if (vm.contentTracker.equals(Content.Fix) && vm.MotoList.isNotEmpty()) {
+                            motoTracker = vm.motoTracker
                             navController.navigate(Screen.AddFix.name+"/?motoId=${vm.motoTracker.mId}")
-                            Log.i("FAB","motoTracker: $vm.motoTracker")
                         }
                     },
-                ) { Icon(selectedIndex.iconSelected2?:Icons.Filled.Add, null) }
+                ) { Icon(vm.contentTracker.iconSelected?:Icons.Filled.Add, null) }
             }
         }
     ) { innerPadding ->
         GraphRoot(
             navController = navController,
             innerPadding = innerPadding,
-            selectedIndex = selectedIndex,
             vm = vm
-        ) { selectedIndex = it }
+        )
     }
 }
 
@@ -76,9 +78,7 @@ fun BottomNavigation(
 fun GraphRoot(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    selectedIndex: Screen,
     vm: ViewModel,
-    function: (Screen) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -90,8 +90,6 @@ fun GraphRoot(
         composable(route = Screen.Home.name) {
             HomeScreen(
                 navController = navController,
-                selectedScreen = selectedIndex,
-                onChangeSelectedScreen = { function(it) },
                 vm = vm
             )
         }
@@ -113,15 +111,16 @@ fun GraphRoot(
     }
 }
 
-enum class Screen(
-    val iconSelected2: ImageVector?,
-    val iconUnselected2: ImageVector?,
+enum class Screen {
+    Home,AddMoto,AddFix
+}
+
+enum class Content(
+    val iconSelected: ImageVector?,
+    val iconUnselected: ImageVector?,
 ) {
-    Home(null,null),
     Moto(Icons.Filled.Motorcycle,Icons.Outlined.Motorcycle),
     Fix(Icons.Filled.Handyman,Icons.Outlined.Handyman),
-    AddMoto(null,null),
-    AddFix(null,null)
 }
 
 @Composable
