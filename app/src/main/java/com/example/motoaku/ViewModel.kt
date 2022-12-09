@@ -47,11 +47,12 @@ class ViewModel @Inject constructor(
         viewModelScope.launch {
             repoMoto.allMoto.collect {
                 MotoList = it
-                if (it.isNotEmpty())
+                if (it.isNotEmpty()) {
                     motoTracker =  it[0]
                     repoFix.fixFromMotoId(it[0].mId).collect {
                         FixList = it
                     }
+                }
             }
         }
     }

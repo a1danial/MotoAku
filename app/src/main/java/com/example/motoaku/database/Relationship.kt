@@ -10,7 +10,7 @@ data class MotoFixes(
 
     @Relation(
         parentColumn = "mId",
-        entityColumn = "motoId"
+        entityColumn = "moto_id"
     )
     val fixes: List<Fix> = emptyList()
 )

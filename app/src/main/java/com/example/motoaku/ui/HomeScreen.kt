@@ -40,6 +40,7 @@ fun HomeScreen(
     // Moto/Fix content variables
     val bottomScreens = listOf(Screen.Moto, Screen.Fix)
     var rowContentSize by remember { mutableStateOf(Size.Zero) }
+    // FIXME Fix content not correctly after adding fix, although button is correctly selected
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 

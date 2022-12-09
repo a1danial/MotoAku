@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
 import com.example.motoaku.database.motorcycle.Motorcycle
 import java.util.Date
 
-@Entity(foreignKeys = [ForeignKey(entity = Motorcycle::class, parentColumns = ["mId"], childColumns = ["fixId"])])
+// android.database.sqlite.SQLiteConstraintException: FOREIGN KEY constraint failed (code 787)
+@Entity(foreignKeys = [ForeignKey(entity = Motorcycle::class, parentColumns = ["mId"], childColumns = ["moto_id"])])
 data class Fix (
     @PrimaryKey(autoGenerate = true) val fixId: Int = 0,
     @ColumnInfo(name = "moto_id") val motoId: Int,
