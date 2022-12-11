@@ -93,9 +93,11 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                bottomContents.forEachIndexed { index, content ->
+                Content.values().forEachIndexed { index, content ->
                     Button(
-                        modifier = Modifier.size(width = 125.dp, height = 35.dp),
+                        modifier = Modifier
+                            .size(width = 125.dp, height = 35.dp)
+                            .testTag(content.testTag),
                         onClick = {
                             vm.mainOnChangeSelectedScreen(content)
                             coroutineScope.launch { listState.animateScrollToItem(index = index) }

@@ -1,10 +1,8 @@
 package com.example.motoaku
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -16,14 +14,14 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
 
 
+@ExperimentalMaterial3Api
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
-class HomeScreenTest {
+class AddMotoTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -36,51 +34,30 @@ class HomeScreenTest {
     lateinit var repoFix: FixRepository
 
     private lateinit var navController: NavHostController
+    private lateinit var viewModel: ViewModel
 
     @ExperimentalMaterial3Api
     @Before
     fun setUp() {
         hiltRule.inject()
         composeTestRule.setContent {
-//            viewModel = hiltViewModel()
+            viewModel = hiltViewModel()
             navController = rememberNavController()
             MotoAkuTheme {
                 BottomNavigation(
                     navController = navController,
+                    vm = viewModel
                 )
             }
         }
     }
 
-    @ExperimentalMaterial3Api
-    @Test
-    fun testButton() {
-        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).assertExists()
-    }
+//    fun When_dataIsKeyedIn_expect_dataCorrectlyDisplayed() { // TODO
+//        TODO Text input
+//        TODO Amount input based on 2 decimal formatting
+
+//    fun When_addMotoSuccessful_expect_returnToHome&Database() { // TODO
+//        TODO return Home
+//        TODO data reflected in Moto table
 }
 
-
-
-class TestTest {
-    @ExperimentalMaterial3Api
-    @get:Rule
-    val composeTestRule = createComposeRule()
-
-    @ExperimentalMaterial3Api
-    @Before
-    fun setUp() {
-        composeTestRule.setContent {
-            MotoAkuTheme {
-                TestScreen()
-            }
-        }
-    }
-
-    @ExperimentalMaterial3Api
-    @Test
-    fun testButton() {
-        composeTestRule.onNodeWithTag(TestTags.TEST_BUTTON).assertExists()
-        composeTestRule.onNodeWithTag(TestTags.TEST_BUTTON).assertTextContains("Test Button")
-        composeTestRule.onNodeWithTag(TestTags.TEST_TEXT).assertTextContains("Test Text",false,true)
-    }
-}

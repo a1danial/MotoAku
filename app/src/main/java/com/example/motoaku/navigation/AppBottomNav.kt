@@ -13,7 +13,10 @@ import androidx.compose.material.icons.filled.Handyman
 import androidx.compose.material.icons.filled.Motorcycle
 import androidx.compose.material.icons.outlined.Handyman
 import androidx.compose.material.icons.outlined.Motorcycle
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,9 +30,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.motoaku.TestTags.BOTTOMNAV_FAB
+import com.example.motoaku.TestTags.HOMESCREEN_CONTENTBUTTON_FIX
+import com.example.motoaku.TestTags.HOMESCREEN_CONTENTBUTTON_MOTO
 import com.example.motoaku.ViewModel
 import com.example.motoaku.database.motorcycle.Motorcycle
-import com.example.motoaku.ui.*
+import com.example.motoaku.ui.AddFixScreen
+import com.example.motoaku.ui.AddMotoScreen
+import com.example.motoaku.ui.HomeScreen
 
 @ExperimentalMaterial3Api
 @Composable
@@ -121,13 +128,15 @@ enum class Screen {
 enum class Content(
     val iconSelected: ImageVector?,
     val iconUnselected: ImageVector?,
+    val testTag: String
 ) {
-    Moto(Icons.Filled.Motorcycle,Icons.Outlined.Motorcycle),
-    Fix(Icons.Filled.Handyman,Icons.Outlined.Handyman),
+    Moto(Icons.Filled.Motorcycle,Icons.Outlined.Motorcycle,HOMESCREEN_CONTENTBUTTON_MOTO),
+    Fix(Icons.Filled.Handyman,Icons.Outlined.Handyman, HOMESCREEN_CONTENTBUTTON_FIX),
 }
 
 @Composable
 fun Visibility(value: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
+    Icons.Filled.Motorcycle.name
     AnimatedVisibility(
         visible = value,
         enter = EnterTransition.None,
