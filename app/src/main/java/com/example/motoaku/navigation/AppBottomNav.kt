@@ -17,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -25,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.motoaku.TestTags.BOTTOMNAV_FAB
 import com.example.motoaku.ViewModel
 import com.example.motoaku.database.motorcycle.Motorcycle
 import com.example.motoaku.ui.*
@@ -51,7 +53,8 @@ fun BottomNavigation(
                 else -> false }
             ) {
                 FloatingActionButton(
-                    modifier = Modifier.padding(10.dp),
+                    modifier = Modifier.padding(10.dp)
+                        .testTag(BOTTOMNAV_FAB),
                     onClick = {
                         if (vm.contentTracker.equals(Content.Moto)) {
                             navController.navigate(Screen.AddMoto.name)

@@ -13,4 +13,8 @@ class MotorcycleRepository(private val motorcycleDao: MotorcycleDao) {
     suspend fun insert(motorcycle: Motorcycle) {
         motorcycleDao.insert(motorcycle)
     }
+
+    fun reset() {
+        motorcycleDao.deleteAll()
+    }
 }

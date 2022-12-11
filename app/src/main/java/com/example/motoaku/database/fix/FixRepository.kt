@@ -12,4 +12,8 @@ class FixRepository(private val fixDao: FixDao) {
     suspend fun insert(fix: Fix) {
         fixDao.insert(fix)
     }
+
+    fun reset() {
+        fixDao.deleteAll()
+    }
 }

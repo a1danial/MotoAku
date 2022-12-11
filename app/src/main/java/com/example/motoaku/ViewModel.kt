@@ -69,4 +69,10 @@ class ViewModel @Inject constructor(
     fun addFix(fix: Fix) = viewModelScope.launch {
         repoFix.insert(fix)
     }
+
+    // [Testing Purposes]
+    fun reset() {
+        repoMoto.reset()
+        repoFix.reset()
+    }
 }

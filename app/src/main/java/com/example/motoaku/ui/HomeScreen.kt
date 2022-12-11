@@ -16,11 +16,13 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
+import com.example.motoaku.TestTags.HOMESCREEN_SELECTEDMOTOCARD
 import com.example.motoaku.ViewModel
 import com.example.motoaku.database.fix.Fix
 import com.example.motoaku.database.motorcycle.Motorcycle
@@ -152,6 +154,7 @@ fun SelectedMotoCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
+            .testTag(HOMESCREEN_SELECTEDMOTOCARD)
     ) {
         Row(
             modifier = Modifier.padding(15.dp),

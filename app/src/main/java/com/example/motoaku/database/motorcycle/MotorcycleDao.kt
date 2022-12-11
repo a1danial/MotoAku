@@ -18,4 +18,8 @@ interface MotorcycleDao {
      VALUES ('Triumph', 'Tiger 800XC ABS A1 SE', 'TRIUMPH');
      */
 
+    // TESTING
+    @Query("DELETE FROM Motorcycle")
+    fun deleteAll()
+
 }

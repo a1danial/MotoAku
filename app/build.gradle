@@ -1,8 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id("dagger.hilt.android.plugin")
+    id 'kotlin-kapt'
 }
 
 android {
@@ -16,7 +16,12 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Replace com.example.android.dagger with your class path.
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner" // Gradle original
+        testInstrumentationRunner = "com.example.motoaku.CustomTestRunner"
+//        testInstrumentationRunner = "com.example.android.dagger.CustomTestRunner"
+
         vectorDrawables {
             useSupportLibrary true
         }
@@ -79,6 +84,13 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    // For instrumented tests.
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
+    // ...with Kotlin.
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
+//    // ...with Java.
+//    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.44")
 
     implementation("androidx.compose.material3:material3:1.0.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.0.1")

@@ -15,5 +15,5 @@ interface FixDao {
     suspend fun insert(fix: Fix)
 
     @Query("DELETE FROM Fix")
-    suspend fun deleteAll()
+    fun deleteAll()
 }
