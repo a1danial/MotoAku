@@ -64,7 +64,7 @@ fun BottomNavigation(
                             navController.navigate(Screen.AddFix.name+"/?motoId=${vm.motoTracker.mId}")
                         }
                     },
-                ) { Icon(vm.contentTracker.iconSelected?:Icons.Filled.Add, null) }
+                ) { Icon(vm.contentTracker.iconUnselected?:Icons.Filled.Add, vm.contentTracker.iconUnselected?.name) }
             }
         }
     ) { innerPadding ->

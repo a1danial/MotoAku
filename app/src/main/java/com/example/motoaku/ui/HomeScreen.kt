@@ -109,9 +109,7 @@ fun HomeScreen(
                         ),
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Icon(
-                            if (vm.contentTracker == content) content.iconSelected!! else content.iconUnselected!!,
-                            null)
+                        Icon(content.iconUnselected!!, null)
                         Spacer(modifier = Modifier.size(10.dp))
                         Text(text = content.name)
                     }
