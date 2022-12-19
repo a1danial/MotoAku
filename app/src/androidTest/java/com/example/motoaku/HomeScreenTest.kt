@@ -1,8 +1,6 @@
 package com.example.motoaku
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Handyman
-import androidx.compose.material.icons.filled.Motorcycle
 import androidx.compose.material.icons.outlined.Handyman
 import androidx.compose.material.icons.outlined.Motorcycle
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,7 +62,7 @@ class HomeScreenTest {
 //    fun openAppFirstTime() { // TODO
 
     @Test
-    fun openApp() {
+    fun When_appOpen_expect_displayHomeScreenAndShowMotoContent() {
         // FAB show Moto icon
         composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).assertContentDescriptionEquals(Icons.Outlined.Motorcycle.name)
         // Content tracker variable is selected
@@ -72,7 +70,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun clickBothContentButton() {
+    fun When_contentButtonPressed_expect_displayRelevantContent() {
         // Click fix content button
         composeTestRule.onNodeWithTag(TestTags.HOMESCREEN_CONTENTBUTTON_FIX).performClick()
         // FAB show Moto icon
