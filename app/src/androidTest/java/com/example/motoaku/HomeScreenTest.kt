@@ -15,6 +15,7 @@ import com.example.motoaku.database.fix.FixRepository
 import com.example.motoaku.database.motorcycle.MotorcycleRepository
 import com.example.motoaku.navigation.BottomNavigation
 import com.example.motoaku.navigation.Content
+import com.example.motoaku.navigation.Screen
 import com.example.motoaku.ui.theme.MotoAkuTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -84,6 +85,35 @@ class HomeScreenTest {
         composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).assertContentDescriptionEquals(Icons.Outlined.Motorcycle.name)
         // Content tracker variable is selected
         Assert.assertEquals(Content.Moto,viewModel.contentTracker)
+    }
+
+    @Test
+    fun When_motoFABPressed_expect_navigateToAddMotoScreen() {
+        // Click moto FAB
+        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).performClick()
+        // Determine if route is navigated to Moto screen
+        val route = navController.currentBackStackEntry?.destination?.route
+        Assert.assertEquals(Screen.AddMoto.name,route)
+    }
+
+    @Test
+    fun When_fixFABPressedWithNoMoto_expect_FABNotShown() {
+        // TODO Verify no moto is stored
+        // Click on fix content button
+        composeTestRule.onNodeWithTag(TestTags.HOMESCREEN_CONTENTBUTTON_FIX).performClick()
+        // Verify FAB is not shown
+        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).assertDoesNotExist()
+    }
+
+    @Test
+    fun When_fixFABPressedWithMoto_expect_navigateToAddFixScreen() {
+        // Click on fix content button
+        composeTestRule.onNodeWithTag(TestTags.HOMESCREEN_CONTENTBUTTON_FIX).performClick()
+        // Click fix FAB
+        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).performClick()
+        // Determine if route is navigated to Fix screen
+        val route = navController.currentBackStackEntry?.destination?.route
+        Assert.assertEquals(Screen.AddFix.name+"/?motoId={motoId}",route)
     }
 }
 
