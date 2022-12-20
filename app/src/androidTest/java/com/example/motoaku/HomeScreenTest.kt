@@ -11,6 +11,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.motoaku.TestTags.BOTTOMNAV_FAB
+import com.example.motoaku.TestTags.HOMESCREEN_CONTENTBUTTON_FIX
+import com.example.motoaku.TestTags.HOMESCREEN_SELECTEDMOTOCARD
 import com.example.motoaku.database.fix.FixRepository
 import com.example.motoaku.database.motorcycle.MotorcycleRepository
 import com.example.motoaku.navigation.BottomNavigation
@@ -65,7 +68,7 @@ class HomeScreenTest {
     @Test
     fun When_appOpen_expect_displayHomeScreenAndShowMotoContent() {
         // FAB show Moto icon
-        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).assertContentDescriptionEquals(Icons.Outlined.Motorcycle.name)
+        composeTestRule.onNodeWithTag(BOTTOMNAV_FAB).assertContentDescriptionEquals(Icons.Outlined.Motorcycle.name)
         // Content tracker variable is selected
         Assert.assertEquals(Content.Moto,viewModel.contentTracker)
     }
@@ -75,14 +78,14 @@ class HomeScreenTest {
         // Click fix content button
         composeTestRule.onNodeWithTag(TestTags.HOMESCREEN_CONTENTBUTTON_FIX).performClick()
         // FAB show Moto icon
-        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).assertContentDescriptionEquals(Icons.Outlined.Handyman.name)
+        composeTestRule.onNodeWithTag(BOTTOMNAV_FAB).assertContentDescriptionEquals(Icons.Outlined.Handyman.name)
         // Content tracker variable is selected
         Assert.assertEquals(Content.Fix,viewModel.contentTracker)
 
         // Click moto content button
         composeTestRule.onNodeWithTag(TestTags.HOMESCREEN_CONTENTBUTTON_MOTO).performClick()
         // FAB show Moto icon
-        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).assertContentDescriptionEquals(Icons.Outlined.Motorcycle.name)
+        composeTestRule.onNodeWithTag(BOTTOMNAV_FAB).assertContentDescriptionEquals(Icons.Outlined.Motorcycle.name)
         // Content tracker variable is selected
         Assert.assertEquals(Content.Moto,viewModel.contentTracker)
     }
@@ -90,7 +93,7 @@ class HomeScreenTest {
     @Test
     fun When_motoFABPressed_expect_navigateToAddMotoScreen() {
         // Click moto FAB
-        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).performClick()
+        composeTestRule.onNodeWithTag(BOTTOMNAV_FAB).performClick()
         // Determine if route is navigated to Moto screen
         val route = navController.currentBackStackEntry?.destination?.route
         Assert.assertEquals(Screen.AddMoto.name,route)
@@ -98,19 +101,22 @@ class HomeScreenTest {
 
     @Test
     fun When_fixFABPressedWithNoMoto_expect_FABNotShown() {
-        // TODO Verify no moto is stored
+        // TODO Utilise fake database to simulate test
+        // Verify no moto is stored; Text = '[, ]'
+        composeTestRule.onNodeWithTag(HOMESCREEN_SELECTEDMOTOCARD).assertTextEquals("")
         // Click on fix content button
-        composeTestRule.onNodeWithTag(TestTags.HOMESCREEN_CONTENTBUTTON_FIX).performClick()
+        composeTestRule.onNodeWithTag(HOMESCREEN_CONTENTBUTTON_FIX).performClick()
         // Verify FAB is not shown
-        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(BOTTOMNAV_FAB).assertDoesNotExist()
     }
 
     @Test
     fun When_fixFABPressedWithMoto_expect_navigateToAddFixScreen() {
+        // TODO Utilise fake database to simulate test
         // Click on fix content button
         composeTestRule.onNodeWithTag(TestTags.HOMESCREEN_CONTENTBUTTON_FIX).performClick()
         // Click fix FAB
-        composeTestRule.onNodeWithTag(TestTags.BOTTOMNAV_FAB).performClick()
+        composeTestRule.onNodeWithTag(BOTTOMNAV_FAB).performClick()
         // Determine if route is navigated to Fix screen
         val route = navController.currentBackStackEntry?.destination?.route
         Assert.assertEquals(Screen.AddFix.name+"/?motoId={motoId}",route)
