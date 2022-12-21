@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -29,6 +30,7 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.motoaku.R
+import com.example.motoaku.TestTags.ADDFIX_INPUTCOSTPRICE
 import com.example.motoaku.ViewModel
 import com.example.motoaku.database.fix.Fix
 import com.example.motoaku.database.motorcycle.Motorcycle
@@ -95,7 +97,12 @@ fun AddFixScreen(
             GenericNumberField(R.string.fix_odo_start,odoStart,modifier.weight(1f),KeyboardOptions(keyboardType = KeyboardType.Number)) {odoStart = digitDecimalFilter(it)}
             GenericNumberField(R.string.fix_odo_end,odoEnd,modifier.weight(1f),KeyboardOptions(keyboardType = KeyboardType.Number)) {odoEnd = digitDecimalFilter(it)}
         }
-        GenericNumberField(R.string.fix_cost_amount,costPrice,modifier,KeyboardOptions(keyboardType = KeyboardType.Number)) {costPrice = digitDecimalFilter(it)}
+        GenericNumberField(
+            R.string.fix_cost_amount,
+            costPrice,
+            modifier.testTag(ADDFIX_INPUTCOSTPRICE),
+            KeyboardOptions(keyboardType = KeyboardType.Number)
+        ) {costPrice = digitDecimalFilter(it)}
         GenericTextField(R.string.fix_description,comment,modifier) {comment = it}
         Button(
             onClick = {

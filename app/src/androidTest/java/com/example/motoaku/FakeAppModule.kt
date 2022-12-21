@@ -7,7 +7,6 @@ import com.example.motoaku.database.fix.FixRepository
 import com.example.motoaku.database.motorcycle.MotorcycleDao
 import com.example.motoaku.database.motorcycle.MotorcycleRepository
 import com.example.motoaku.di.AppModule
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -30,7 +29,7 @@ object FakeAppModule {
     @Provides
     fun provideMotoDao(
         appDatabase: AppDatabase
-    ) = appDatabase.motoDao()
+    ) = appDatabase.getMotoDao()
 
     @Provides
     fun provideMotoRepo(
@@ -41,7 +40,7 @@ object FakeAppModule {
     @Provides
     fun provideFixDao(
         appDatabase: AppDatabase
-    ) = appDatabase.fixDao()
+    ) = appDatabase.getFixDao()
 
     @Provides
     fun provideFixRepo(

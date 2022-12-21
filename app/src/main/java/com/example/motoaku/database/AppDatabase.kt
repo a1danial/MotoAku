@@ -13,8 +13,8 @@ import com.example.motoaku.database.motorcycle.MotorcycleDao
 @Database(entities = [Motorcycle::class, Fix::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun fixDao(): FixDao
-    abstract fun motoDao(): MotorcycleDao
+    abstract fun getFixDao(): FixDao
+    abstract fun getMotoDao(): MotorcycleDao
 
     companion object {
 

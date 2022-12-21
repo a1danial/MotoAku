@@ -9,4 +9,6 @@ object TestTags {
     internal const val HOMESCREEN_CONTENTBUTTON_MOTO = "HomeScreenContentButtonMoto"
     internal const val HOMESCREEN_CONTENTBUTTON_FIX = "HomeScreenContentButtonFix"
     internal const val BOTTOMNAV_FAB = "BottomNavigationFAB"
+
+    internal const val ADDFIX_INPUTCOSTPRICE = "AddFixInputCostPrice"
 }

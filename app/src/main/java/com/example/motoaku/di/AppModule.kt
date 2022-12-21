@@ -25,7 +25,7 @@ class AppModule {
     @Provides
     fun provideMotoDao(
         appDatabase: AppDatabase
-    ) = appDatabase.motoDao()
+    ) = appDatabase.getMotoDao()
 
     @Provides
     fun provideMotoRepo(
@@ -36,7 +36,7 @@ class AppModule {
     @Provides
     fun provideFixDao(
         appDatabase: AppDatabase
-    ) = appDatabase.fixDao()
+    ) = appDatabase.getFixDao()
 
     @Provides
     fun provideFixRepo(

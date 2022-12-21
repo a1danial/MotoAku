@@ -1,5 +1,6 @@
 package com.example.motoaku.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -52,26 +54,12 @@ fun BottomNavigation(
 
     Scaffold(
         floatingActionButton = {
-            Visibility( when {
-                navBackStackEntry?.destination?.route == Screen.Home.name &&
-                        vm.contentTracker == Content.Fix &&
-                        vm.MotoList.isEmpty() -> false
-                navBackStackEntry?.destination?.route == Screen.Home.name -> true
-                else -> false }
+            FAB(
+                vm = vm,
+                navController = navController,
+                navBackStackEntry = navBackStackEntry,
             ) {
-                FloatingActionButton(
-                    modifier = Modifier.padding(10.dp)
-                        .testTag(BOTTOMNAV_FAB),
-                    onClick = {
-                        if (vm.contentTracker.equals(Content.Moto)) {
-                            navController.navigate(Screen.AddMoto.name)
-                        }
-                        else if (vm.contentTracker.equals(Content.Fix) && vm.MotoList.isNotEmpty()) {
-                            motoTracker = vm.motoTracker
-                            navController.navigate(Screen.AddFix.name+"/?motoId=${vm.motoTracker.mId}")
-                        }
-                    },
-                ) { Icon(vm.contentTracker.iconUnselected?:Icons.Filled.Add, vm.contentTracker.iconUnselected?.name) }
+                motoTracker = vm.motoTracker
             }
         }
     ) { innerPadding ->
@@ -80,6 +68,36 @@ fun BottomNavigation(
             innerPadding = innerPadding,
             vm = vm
         )
+    }
+}
+
+@Composable
+fun FAB(
+    vm: ViewModel,
+    navController: NavHostController,
+    navBackStackEntry: NavBackStackEntry?,
+    motoTrackerChange: () -> Unit
+) {
+    Visibility( when {
+        navBackStackEntry?.destination?.route == Screen.Home.name &&
+                vm.contentTracker == Content.Fix &&
+                vm.MotoList.isEmpty() -> false
+        navBackStackEntry?.destination?.route == Screen.Home.name -> true
+        else -> false
+    }) {
+        FloatingActionButton(
+            modifier = Modifier.padding(10.dp)
+                .testTag(BOTTOMNAV_FAB),
+            onClick = {
+                if (vm.contentTracker.equals(Content.Moto)) {
+                    navController.navigate(Screen.AddMoto.name)
+                }
+                else if (vm.contentTracker.equals(Content.Fix) && vm.MotoList.isNotEmpty()) {
+                    motoTrackerChange()
+                    navController.navigate(Screen.AddFix.name+"/?motoId=${vm.motoTracker.mId}")
+                }
+            },
+        ) { Icon(vm.contentTracker.iconUnselected?:Icons.Filled.Add, vm.contentTracker.iconUnselected?.name) }
     }
 }
 
@@ -144,62 +162,5 @@ fun Visibility(value: Boolean, content: @Composable AnimatedVisibilityScope.() -
         content = content
     )
 }
-
-/*@Composable
-fun AppBottomNav(navController: NavHostController) {
-    val screens = listOf(Screen.Moto, Screen.Fix)
-    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    bottomBarState.value = navBackStackEntry?.destination?.route == Screen.Moto.name ||
-            navBackStackEntry?.destination?.route == Screen.Fix.name
-//            navBackStackEntry?.destination?.route == NavItem.Accounts.navRoute ||
-//            navBackStackEntry?.destination?.route == NavItem.Settings.navRoute
-    Scaffold(
-        bottomBar = {
-            Hide(bottomBarState.value) {
-                BottomNavigation {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentRoute = navBackStackEntry?.destination?.route
-                    screens.forEach { screen ->
-                        val selectedComparator = navBackStackEntry?.destination?.hierarchy?.any { it.route == screen.name } == true
-                        BottomNavigationItem(
-                            icon = {
-                                Icon(
-                                    if (selectedComparator) painterResource(screen.iconSelected!!) else painterResource(screen.iconUnselected!!),
-                                    contentDescription = null
-                                )
-                            },
-                            label = { Text(text = screen.name) },
-                            selected = currentRoute == screen.name,
-                            onClick = {
-                                navController.navigate(screen.name) {
-                                    navController.graph.startDestinationRoute?.let { screen_route ->
-                                        popUpTo(screen_route) { saveState = true }
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-        },
-        floatingActionButton = {
-            Hide(bottomBarState.value) {
-                FloatingActionButton(
-                    onClick = {
-                        if (navBackStackEntry?.destination?.route.equals(Screen.Moto.name)) {
-                            navController.navigate(Screen.AddMoto.name) }
-                        else if (navBackStackEntry?.destination?.route.equals(Screen.Fix.name)) {
-                            navController.navigate(Screen.AddFix.name) }
-                    },
-                ) { Icon(painterResource(id = R.drawable.add), null) }
-            }
-        },
-    ) { innerPadding ->
-        GraphRoot(navController, innerPadding)
-    }
-}*/
 
 
