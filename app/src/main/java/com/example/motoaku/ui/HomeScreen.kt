@@ -45,6 +45,7 @@ fun HomeScreen(
 
     // Dropdown Menu variables
     var expanded by remember { mutableStateOf(false) }
+    var onDismissRequestCheck by remember { mutableStateOf(false) }
     var rowMenuSize by remember { mutableStateOf(Size.Zero) }
 
     LaunchedEffect(vm.MotoList) {
@@ -61,7 +62,16 @@ fun HomeScreen(
                 .onGloballyPositioned { rowMenuSize = it.size.toSize() }
         ) {
             SelectedMotoCard(vm.motoTracker) {
-                expanded = !expanded
+                // FIXME Selected card does not expand correctly. After expanded, if dismissed outside,
+                //  you'll have to press selected moto twice to expand
+                when {
+                    !onDismissRequestCheck -> onDismissRequestCheck = true
+                    vm.MotoList.isNotEmpty() && onDismissRequestCheck -> {
+                        expanded = !expanded
+                        onDismissRequestCheck = false
+                    }
+                    vm.MotoList.isNotEmpty() && !onDismissRequestCheck -> expanded = !expanded
+                }
             }
             DropdownMenu(
                 expanded = expanded,
@@ -121,8 +131,10 @@ fun HomeScreen(
             LazyRow(
                 state = listState,
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.onPrimary.copy(0.05f),
-                        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .background(
+                        MaterialTheme.colorScheme.onPrimary.copy(0.05f),
+                        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                    )
                     .fillMaxSize()
                     .onGloballyPositioned { rowContentSize = it.size.toSize() },
                 userScrollEnabled = false
