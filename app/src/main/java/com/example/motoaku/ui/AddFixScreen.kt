@@ -73,25 +73,39 @@ fun AddFixScreen(
         BrandField(vm.motoTracker, vm.MotoList, modifier) {
             vm.motoTracker = it
         }
-        GenericTextField(R.string.fix_part,part,modifier,isError = partCheck) {
+        GenericTextField(
+            label = R.string.fix_part,
+            data = part,
+            modifier = modifier,
+            isError = partCheck
+        ) {
             part = it
             if (part.isNotEmpty()) {
                 partCheck = false
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            DateField(R.string.fix_date_start,
-                SimpleDateFormat("EEE d MMM yyyy").format(dateStart),
-                mCalendar,modifier.weight(1f)
-            ) { year, month, day ->
-                dateStart = Date.from(LocalDateTime.of(year,month+1,day,0,0,0).toInstant(ZoneOffset.of("Z")))
-            }
-            DateField(R.string.fix_date_end,
-                if (dateEndFirst) "" else SimpleDateFormat("EEE d MMM yyyy").format(dateEnd),
-                mCalendar,modifier.weight(1f),{ dateEndFirst = false }
-            ) { year, month, day ->
-                dateEnd = Date.from(LocalDateTime.of(year,month+1,day,0,0,0).toInstant(ZoneOffset.of("Z")))
-            }
+            DateField(
+                label = R.string.fix_date_start,
+                dateDate = SimpleDateFormat("EEE d MMM yyyy").format(dateStart),
+                mCalendar = mCalendar,
+                modifier = modifier.weight(1f),
+                updateDate = { year, month, day ->
+                    dateStart = Date.from(LocalDateTime.of(year,month+1,day,0,0,0)
+                        .toInstant(ZoneOffset.of("Z")))
+                }
+            )
+            DateField(
+                label = R.string.fix_date_end,
+                dateDate = if (dateEndFirst) "" else SimpleDateFormat("EEE d MMM yyyy").format(dateEnd),
+                mCalendar = mCalendar,
+                modifier = modifier.weight(1f),
+                firstChange = { dateEndFirst = false },
+                updateDate = { year, month, day ->
+                    dateEnd = Date.from(LocalDateTime.of(year,month+1,day,0,0,0)
+                        .toInstant(ZoneOffset.of("Z")))
+                }
+            )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             GenericNumberField(R.string.fix_odo_start,odoStart,modifier.weight(1f),KeyboardOptions(keyboardType = KeyboardType.Number)) {odoStart = digitDecimalFilter(it)}
@@ -106,7 +120,8 @@ fun AddFixScreen(
         GenericTextField(R.string.fix_description,comment,modifier) {comment = it}
         Button(
             onClick = {
-                if (part.isEmpty()) {
+                val isPartInputEmpty = part.isEmpty()
+                if (isPartInputEmpty) {
                     partCheck = true
                 } else {
                     vm.addFix(

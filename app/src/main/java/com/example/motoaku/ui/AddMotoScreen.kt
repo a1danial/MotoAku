@@ -105,9 +105,11 @@ private fun BrandField(brand: String, modifier: Modifier, onValueChange: (String
             onDismissRequest = { expanded = false },
             modifier = Modifier.width(with(LocalDensity.current) { rowSize.width.toDp() }),
         ) {
+            val brandInputIsNotEmptyANDNoBrandSuggestion = brand.isNotEmpty() && brandSuggestion.isEmpty()
+            val brandInputIsNotEmpty = brand.isNotEmpty()
             when {
-                brand.isNotEmpty() && brandSuggestion.isEmpty() -> expanded = false
-                brand.isNotEmpty() ->
+                brandInputIsNotEmptyANDNoBrandSuggestion -> expanded = false
+                brandInputIsNotEmpty ->
                     brandSuggestion.sorted().forEach {
                         DropdownMenuItem(
                             text = { Text(text = it, modifier = Modifier.fillMaxWidth()) },

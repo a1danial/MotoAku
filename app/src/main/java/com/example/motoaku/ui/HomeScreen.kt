@@ -64,13 +64,16 @@ fun HomeScreen(
             SelectedMotoCard(vm.motoTracker) {
                 // FIXME Selected card does not expand correctly. After expanded, if dismissed outside,
                 //  you'll have to press selected moto twice to expand
+                val doubleClickedFromDropDownMenuOnDismissRequest = !onDismissRequestCheck
+                val isMotoListNotEmptyANDAfterDoubleClickedFromDropDownMenuOnDismissRequest = vm.MotoList.isNotEmpty() && onDismissRequestCheck
+                val isMotoListNotEmpty = vm.MotoList.isNotEmpty() && !onDismissRequestCheck
                 when {
-                    !onDismissRequestCheck -> onDismissRequestCheck = true
-                    vm.MotoList.isNotEmpty() && onDismissRequestCheck -> {
+                    doubleClickedFromDropDownMenuOnDismissRequest -> onDismissRequestCheck = true
+                    isMotoListNotEmptyANDAfterDoubleClickedFromDropDownMenuOnDismissRequest -> {
                         expanded = !expanded
                         onDismissRequestCheck = false
                     }
-                    vm.MotoList.isNotEmpty() && !onDismissRequestCheck -> expanded = !expanded
+                    isMotoListNotEmpty -> expanded = !expanded
                 }
             }
             DropdownMenu(
